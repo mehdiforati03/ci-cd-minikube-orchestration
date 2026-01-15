@@ -1,0 +1,88 @@
+image: docker:latest
+services:
+  - docker:dind
+variables:
+  DOCKER_TLS_CERTDIR: ""
+stages:
+  - build
+  - test
+  - quality
+  - deploy
+  - verify
+build_backend:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd Backend
+    - docker build -t $CI_REGISTRY_IMAGE/backend:latest .
+    - docker push $CI_REGISTRY_IMAGE/backend:latest
+build_frontend:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd frontend
+    - docker build -t $CI_REGISTRY_IMAGE/frontend:latest .
+    - docker push $CI_REGISTRY_IMAGE/frontend:latest
+test_backend:
+  stage: test
+  image: node:18
+  script:
+    - cd Backend
+    - npm install
+    - node --check server.js
+  only:
+    - master
+test_frontend:
+  stage: test
+  image: node:18
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+  only:
+    - master
+
+scan_vulnerabilities:
+  stage: quality
+  tags:
+    - mon-pc-local
+  script:
+    - echo "Lancement du scan de sécurité sur l'image frontend..."
+    - docker run --rm aquasec/trivy:latest image --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE/frontend:latest
+    - echo "Lancement du scan de sécurité sur l'image backend..."
+    - docker run --rm aquasec/trivy:latest image --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE/backend:latest
+  allow_failure: true
+
+
+deploy_to_k8s:
+  stage: deploy
+  tags:
+    - mon-pc-local
+  variables:
+    KUBECONFIG: 'C:\Users\HP\.kube\config'
+  script:
+    - $AUTO_URL = kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}'
+    - echo "Connexion automatique à l'adresse $AUTO_URL"
+    - kubectl config set-cluster minikube --server=$AUTO_URL --insecure-skip-tls-verify=true
+    - kubectl config set-context minikube --cluster=minikube
+    - kubectl config use-context minikube
+    - kubectl apply -f k8s/ --validate=false --insecure-skip-tls-verify=true
+    - kubectl rollout restart deployment frontend
+
+check_production_health:
+  stage: verify
+  tags:
+    - mon-pc-local
+  variables:
+    KUBECONFIG: 'C:\Users\HP\.kube\config'
+  script:
+    - $AUTO_URL = kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}'
+    - kubectl config set-cluster minikube --server=$AUTO_URL --insecure-skip-tls-verify=true
+    - kubectl config use-context minikube
+    - echo "Nettoyage des pods orphelins si besoin..."
+    - sleep 45 
+    - kubectl get pods --insecure-skip-tls-verify=true
+    - kubectl rollout status deployment/frontend --timeout=300s --insecure-skip-tls-verify=true
+    - kubectl rollout status deployment/backend --timeout=300s --insecure-skip-tls-verify=true
+  only:
+    - master

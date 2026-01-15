@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # --- BASE DE DONNÉES ---
+  mysqldb:
+    image: mysql:5.7
+    container_name: ma-bdd-container
+    restart: always  # <-- Relance le conteneur si le PC redémarre
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: projet_web
+    ports:
+      - "3307:3306"  # <-- Port pour accéder à la BDD depuis l'extérieur (ex: DBeaver/MySQL Workbench)
+    volumes:
+      - mysql-data:/var/lib/mysql  # <-- Garde vos données en mémoire sur votre disque dur
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # <-- Crée les tables automatiquement
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- BACKEND ---
+  backend:
+    image: registry.gitlab.com/mehdi.forati/ma-todo-projet/backend:latest
+    container_name: mon-backend-container
+    restart: always  # <-- Sécurité si le serveur Node plante
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: mysqldb
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: projet_web
+    depends_on:
+      mysqldb:
+        condition: service_healthy  # <-- Attend que MySQL soit "Healthy" avant de démarrer
+
+  # --- FRONTEND ---
+  frontend:
+    image: registry.gitlab.com/mehdi.forati/ma-todo-projet/frontend:latest
+    container_name: mon-frontend-container
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    stdin_open: true
+    tty: true
+
+# Définition du volume nommé pour MySQL
+volumes:
+  mysql-data:
