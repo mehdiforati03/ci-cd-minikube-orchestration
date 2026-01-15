@@ -6,7 +6,7 @@ Ce projet consiste en une application de gestion de tâches (**Todo List**) arch
 * **Frontend** : React.js (Interface utilisateur)
 * **Backend** : Node.js (API REST)
 * **Base de données** : MySQL (Persistance des données)
-* **Orchestration** : Kubernetes (Minikube)
+* **Orchestration** : Minikube
 * **Sécurité & Qualité** : Trivy (Scan de vulnérabilités images & manifests)
 * **CI/CD** : GitLab Runner (Pipeline multi-étapes)
 
@@ -29,5 +29,5 @@ Le pipeline automatise le cycle de vie du projet en 5 étapes majeures :
 ###  Compétences
 Ce projet m'a permis de maîtriser :
  * **DevSecOps** : Intégration native de la sécurité (Trivy) dès la phase de contrôle qualité.
- * **Infrastructure as Code** : Gestion sécurisée des déploiements Kubernetes.
+ * **Infrastructure as Code** : Gestion sécurisée des déploiements Minikube.
  * **Automatisation** : Réduction de la surface d'attaque par l'automatisation des tests et des vérifications.
