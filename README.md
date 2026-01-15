@@ -1,6 +1,6 @@
 #  DevSecOps Orchestration : Todo List (React, Node.js, MySQL) sur Minikube
 
-Ce projet consiste en une application de gestion de tâches (**Todo List**) architecturée en micro-services. Il démontre la mise en place d'une infrastructure complète conteneurisée avec **Docker** et orchestrée via **Kubernetes (Minikube)**, avec un pipeline **CI/CD** sécurisé automatisé via **GitLab Runner**.
+Ce projet consiste en une application de gestion de tâches (**Todo List**) architecturée en micro-services. Il démontre la mise en place d'une infrastructure complète conteneurisée avec **Docker** et orchestrée via **Minikube**, avec un pipeline **CI/CD** sécurisé automatisé via **GitLab Runner**.
 
 ##  Les techniques
 * **Frontend** : React.js (Interface utilisateur)
