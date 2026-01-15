@@ -12,11 +12,11 @@ Ce projet consiste en une application de gestion de tâches (**Todo List**) arch
 
 ##  Architecture du Projet
 Le dépôt est organisé de manière professionnelle pour séparer les responsabilités :
-# `/frontend` : Application client React.
-# `/Backend` : Serveur API Node.js.
-# `/k8s` : Manifestes Kubernetes pour l'orchestration.
-# `.gitlab-ci.yml` : Configuration du pipeline DevSecOps.
-# `init.sql` : Script d'initialisation MySQL.
+* `/frontend` : Application client React.
+* `/Backend` : Serveur API Node.js.
+* `/k8s` : Manifestes Kubernetes pour l'orchestration.
+* `.gitlab-ci.yml` : Configuration du pipeline DevSecOps.
+* `init.sql` : Script d'initialisation MySQL.
 
 ##  Pipeline CI/CD & Sécurité
 Le pipeline automatise le cycle de vie du projet en 5 étapes majeures :
@@ -28,6 +28,6 @@ Le pipeline automatise le cycle de vie du projet en 5 étapes majeures :
 
 ###  Compétences
 Ce projet m'a permis de maîtriser :
- **DevSecOps** : Intégration native de la sécurité (Trivy) dès la phase de contrôle qualité.
- **Infrastructure as Code** : Gestion sécurisée des déploiements Kubernetes.
- **Automatisation** : Réduction de la surface d'attaque par l'automatisation des tests et des vérifications.
+ * **DevSecOps** : Intégration native de la sécurité (Trivy) dès la phase de contrôle qualité.
+ * **Infrastructure as Code** : Gestion sécurisée des déploiements Kubernetes.
+ * **Automatisation** : Réduction de la surface d'attaque par l'automatisation des tests et des vérifications.
